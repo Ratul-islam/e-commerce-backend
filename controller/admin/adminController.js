@@ -1,5 +1,7 @@
 
+const Admin = require("../../models/admin/adminModel")
 const Products = require("../../models/product/productModel")
+const {createToken} = require('../../utils/createToken')
 const catchAsync = require("../../utils/catchAsync");
 const { uniqueCode } = require("../../utils/uniqueCode");
 const { response } = require("../../utils/response");
@@ -8,14 +10,69 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt')
 const dotenv = require('dotenv')
 
+
+
+// register admin temporary 
+exports.regAdmin = catchAsync(async(req, res)=>{
+    const { firstName,lastName, email, phoneNumber, password  } = req.body;
+  
+  if (email) {
+    const existingReseller = await Admin.findOne({ email: email });
+    if (existingReseller) {
+      return response(res, 409, {
+        status: "conflict",
+        message: "Email already exists in our database.",
+      });
+    }
+  }
+  
+  if (phoneNumber) {
+    const existingResellerByPhone = await Admin.findOne({
+      phoneNumber: phoneNumber,
+    });
+    if (existingResellerByPhone) {
+      return response(res, 409, {
+        status: "conflict",
+        message: "Phone number already exists in our database.",
+      });
+    }
+  }
+if(password.length < 8){
+  return response(res, 403, {
+    status: "FAILED",
+    message: "password must be minimum 8 characters long"
+  })
+};
+
+    const admin = await Admin.create({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: await bcrypt.hash(password, 10),
+      role: 'admin'
+    });
+    
+    const payload = {user: admin._id, role:admin.role}
+    const token = await createToken(payload)
+
+
+    // console.log(token)
+    return response(res, 201, {
+      status: "SUCCESS",
+      message: "admin account created successfully",
+      data: admin,
+      token: token,
+    });
+})
 // // get the list of all products
-exports.getAllProducts = catchAsync(async (req, res) => {
+exports.getAllProductsAdmin = catchAsync(async (req, res) => {
     const products = await Products.find();
     return response(res, 200, products);
   });
   
   
-exports.addProduct = catchAsync(async (req, res) => {
+exports.addProductAdmin = catchAsync(async (req, res) => {
     const {name, desc, price, stock} = req.body
     const data = req.headers.token
     const {user} = jwt.verify(data,  process.env.SECRET)
@@ -26,7 +83,7 @@ exports.addProduct = catchAsync(async (req, res) => {
             price: price,
             stock: stock,
             uploadedBy: user,
-            isActive: false
+            isActive: true
         })
         if(product){
             return response(res, 201, {
@@ -41,7 +98,7 @@ exports.addProduct = catchAsync(async (req, res) => {
     }
 });
 // update product by id 
-exports.updateProduct = catchAsync(async (req, res)=>{
+exports.updateProductAdmin = catchAsync(async (req, res)=>{
 
      const productId = req.params.productId
      const updatedData = req.body
@@ -65,7 +122,7 @@ exports.updateProduct = catchAsync(async (req, res)=>{
       }
 })
 // delete product by id
-exports.deleteProduct = catchAsync(async (req, res)=>{
+exports.deleteProductAdmin = catchAsync(async (req, res)=>{
     const id = req.params.productId
     try{
         const data = await Products.findOneAndDelete({_id: id})

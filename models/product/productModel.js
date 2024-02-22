@@ -8,6 +8,11 @@ const productSchema = new mongoose.Schema({
     minlength: 1,
     maxlength: 255, 
   },
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Seller",
+    required: true
+  },
   description: {
     type: String,
     required: true,
@@ -38,6 +43,10 @@ const productSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid image URL`
     }
   },
+  role: {
+    type: String,
+    required: true
+  },
   price: {
     type: Number,
     required: true,
@@ -56,7 +65,11 @@ const productSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid stock quantity`
     }
   },
-  // Additional fields as needed (e.g., ratings, reviews, discounts)
+  isActive: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

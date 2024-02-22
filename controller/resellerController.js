@@ -18,7 +18,7 @@ exports.getAllResellers = catchAsync(async (req, res) => {
 
 // Creates a new seller with necessary validation and error handling.
 exports.registerReseller = catchAsync(async (req, res) => {
-  const { email, phoneNumber, referredBy, password ,...resellerData } = req.body;
+  const { firstName,lastName, email, phoneNumber, referredBy, password  } = req.body;
   
   if (email) {
     const existingReseller = await Reseller.findOne({ email: email });
@@ -63,11 +63,19 @@ if(password.length < 8){
     referralCode = await uniqueCode();
 
     const reseller = await Reseller.create({
-      email: email,
-      phoneNumber: phoneNumber,
+      firstName: firstName,
+      lastName: lastName || '',
+      email: {
+        emailAcc: email.emailAcc,
+        isEmailVerified: false
+      },
+      phoneNumber: {
+        phoneAcc: phoneNumber.phoneAcc,
+        isPhoneVerified: false
+      },
       password: await bcrypt.hash(password, 10),
       referralCode: referralCode,
-      ...resellerData
+      role: 'reseller'
     });
     
     const payload = {user: reseller._id,role:reseller.role}
@@ -81,8 +89,6 @@ if(password.length < 8){
         console.error('Error adding referral:', err);
       }
     }
-
-
     // console.log(token)
     return response(res, 201, {
       status: "SUCCESS",

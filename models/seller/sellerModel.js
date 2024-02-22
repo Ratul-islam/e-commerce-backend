@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
-const resellerSchema = new mongoose.Schema({
+const sellerSchema = new mongoose.Schema({
     firstName: {
         type: String,
         maxlength: 30,
@@ -47,21 +47,9 @@ const resellerSchema = new mongoose.Schema({
         select: false
 
     },
-    referralCode: {
-        type: String,
-        unique: true
-    },
-    referredBy:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Reseller"
-    } ,
-    hasReferred:{
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reseller" }],
-      default: []
-    },
     role: {
       type: String,
-      default: "reseller"
+      default: "seller"
     },
     
   createdAt: {
@@ -73,20 +61,6 @@ const resellerSchema = new mongoose.Schema({
     default: Date.now
   }
 })
-// function to add all the users a user has referred to his id
-resellerSchema.statics.addReferral = async function(newSellerId, referringSellerId) {
-    try {
-        const referringSeller = await Reseller.findOne({referralCode: referringSellerId});
-        if (!referringSeller) {
-            throw new Error("Referring Reseller not found");
-        }
-        referringSeller.hasReferred.push(newSellerId);
-        const stat = await referringSeller.save();
-    } catch (error) {
-        console.error("Error adding referral:", error);
-        throw error;
-    }
-  };
 // Hash password before saving
 // resellerSchema.pre('save', async function (next) {
 //     if (this.isModified('password')) {
@@ -96,17 +70,17 @@ resellerSchema.statics.addReferral = async function(newSellerId, referringSeller
 // });
 
 // Instance method for generating a random reset token
-resellerSchema.methods.generateResetPasswordToken = function () {
+sellerSchema.methods.generateResetPasswordToken = function () {
     const crypto = require('crypto');
     this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
     this.resetPasswordTokenExpires = Date.now() + 3600000; // Expires in 1 hour
   };
   
   // Instance method to clear the reset token after resetting password
-  resellerSchema.methods.clearResetPasswordToken = function () {
+  sellerSchema.methods.clearResetPasswordToken = function () {
     this.resetPasswordToken = null;
     this.resetPasswordTokenExpires = null;
   };
 
-const Reseller = mongoose.model("Reseller", resellerSchema);
-module.exports = Reseller
+const Seller = mongoose.model("Seller", sellerSchema);
+module.exports = Seller

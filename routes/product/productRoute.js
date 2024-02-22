@@ -1,10 +1,11 @@
 const express = require("express");
-const productController = require("../../controller/product/productController");
+const {getAllProducts, addProduct,updateProduct, deleteProduct} = require("../../controller/product/productController");
 const router = express.Router();
-const {verifyToken, verifyAdminToken} = require('../../middlewares/verifyToken')
+const {verifyAdminSellerToken, verifyAdminToken, verifyAllToken,verifySellerProductToken} = require('../../middlewares/verifyToken')
 
-router.route("/").get(verifyToken, productController.getAllProducts)
-router.route("/add-new-product").post(productController.addProduct)
+router.route("/").get(verifyAllToken, getAllProducts)
+router.route("/add-new-product").post(verifyAdminSellerToken, addProduct)
+router.route("/:productId").put(verifyAdminSellerToken, updateProduct).delete(verifySellerProductToken, deleteProduct)
 
 
 
