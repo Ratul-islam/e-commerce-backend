@@ -16,26 +16,26 @@ const resellerSchema = new mongoose.Schema({
         trim: true
     },
     email :{
-        acc: {
+        emailAcc: {
         type: String,
         required: [true, 'Please provide an email'],
         unique: [true, 'this email is already taken'],
         match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, 'Please provide a valid email']
         },
-        isEmailVarified: {
+        isEmailVerified: {
             default: false,
             type: Boolean
         }
         
     },
     phoneNumber: {
-        acc: {
+        phoneAcc: {
         type: Number,
         required: [true, 'please provide an phone number'],
         unique: [true, 'your phone number is already taken'],
         minlength: 11
         },
-        isEmailVarified:{
+        isEmailVesrified:{
             default: false,
             type: Boolean
         }
@@ -58,6 +58,11 @@ const resellerSchema = new mongoose.Schema({
     hasReferred:{
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reseller" }],
       default: []
+    },
+    role: {
+      type: String,
+      required: true,
+      default: "reseller"
     },
     
   createdAt: {
@@ -84,17 +89,12 @@ resellerSchema.statics.addReferral = async function(newSellerId, referringSeller
     }
   };
 // Hash password before saving
-resellerSchema.pre('save', async function (next) {
-    if (this.isModified('password')) {
-      this.password = await bcrypt.hash(this.password, 10);
-    }
-    next();
-});
-// Instance method for password comparison (during login)
-resellerSchema.methods.comparePassword = async function (candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
-};
-
+// resellerSchema.pre('save', async function (next) {
+//     if (this.isModified('password')) {
+//       this.password = await bcrypt.hash(this.password, 10);
+//     }
+//     next();
+// });
 
 // Instance method for generating a random reset token
 resellerSchema.methods.generateResetPasswordToken = function () {

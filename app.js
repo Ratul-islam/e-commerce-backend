@@ -12,12 +12,14 @@ app.use(express.urlencoded({extended: true}))
 
 // routes import 
 const ResellerRoutes = require("./routes/resellerRoutes")
+const productRoutes = require("./routes/product/productRoute")
 
 
 
 // use routes 
 // app.use("api/reseller", ResellerRoutes)
 app.use("/api/reseller", ResellerRoutes)
+app.use("/api/product", productRoutes)
 
 
 
