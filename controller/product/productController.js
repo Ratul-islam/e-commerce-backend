@@ -5,6 +5,7 @@ const { uniqueCode } = require("../../utils/uniqueCode");
 const { response } = require("../../utils/response");
 const mongoose = require('mongoose');
 const jwt = require("jsonwebtoken");
+const {getCurrentDateTime} = require('../../utils/getCurrentDateTime')
 const bcrypt = require('bcrypt')
 const dotenv = require('dotenv')
 
@@ -16,17 +17,20 @@ exports.getAllProducts = catchAsync(async (req, res) => {
   
   
 exports.addProduct = catchAsync(async (req, res) => {
-    const {name, desc, price, stock} = req.body
+    const {name, description, price, stock} = req.body
     const data = req.headers.token
     const {user} = jwt.verify(data,  process.env.SECRET)
+    
     try{
-        const product = await Products.create({
+         const product = await Products.create({
             name: name,
-            description: desc,
+            description: description,
             price: price,
             stock: stock,
             uploadedBy: user,
             isActive: false
+        }).catch(err=>{
+            return res.send(err)
         })
         if(product){
             return response(res, 201, {
@@ -44,9 +48,11 @@ exports.addProduct = catchAsync(async (req, res) => {
 exports.updateProduct = catchAsync(async (req, res)=>{
 
      const productId = req.params.productId
-     const updatedData = req.body
+     const {name, description , category, brand, image, price, stock} = req.body
+     const updatedAt = getCurrentDateTime()
+
     try {
-        const updatedProduct = await Products.findByIdAndUpdate(productId, updatedData, { new: true });
+        const updatedProduct = await Products.findByIdAndUpdate(productId,  {name, description , category, brand, image, price, stock, updatedAt}, { new: true });
     
         if (!updatedProduct) {
           return res.status(404).send('Product not found');

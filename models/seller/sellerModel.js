@@ -12,7 +12,6 @@ const sellerSchema = new mongoose.Schema({
     lastName: {
         type: String,
         maxlength: 30,
-        minlength: 2,
         trim: true
     },
     email :{
@@ -50,6 +49,12 @@ const sellerSchema = new mongoose.Schema({
     role: {
       type: String,
       default: "seller"
+    },
+    status: {type: String,
+      enum: ['Active', 'De-active', 'Pending', 'Paid-pending'],
+      required: true,
+      trim: true,
+      default: "Pending"
     },
     
   createdAt: {

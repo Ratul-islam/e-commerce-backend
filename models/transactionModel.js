@@ -40,15 +40,15 @@ const transactionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  metadata: {
-    type: mongoose.Schema.Types.Mixed, // Flexible object for additional data
-    optional: true,
-  },
-});
+  // metadata: {
+  //   type: mongoose.Schema.Types.Mixed, // Flexible object for additional data
+  //   optional: true,
+  // },
+},{timestamps: true});
 
-transactionSchema.pre('save', function (next) {
-  // Perform validation, data sanitization, or other pre-save tasks here
-  next();
-});
+// transactionSchema.pre('save', function (next) {
+//   // Perform validation, data sanitization, or other pre-save tasks here
+//   next();
+// });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

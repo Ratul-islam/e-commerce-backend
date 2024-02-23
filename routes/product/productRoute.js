@@ -5,7 +5,7 @@ const {verifyAdminSellerToken, verifyAdminToken, verifyAllToken,verifySellerProd
 
 router.route("/").get(verifyAllToken, getAllProducts)
 router.route("/add-new-product").post(verifyAdminSellerToken, addProduct)
-router.route("/:productId").put(verifyAdminSellerToken, updateProduct).delete(verifySellerProductToken, deleteProduct)
+router.route("/:productId").patch(verifySellerProductToken, updateProduct).delete(verifySellerProductToken, deleteProduct)
 
 
 

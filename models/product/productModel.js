@@ -29,10 +29,6 @@ const productSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  model: {
-    type: String,
-    trim: true
-  },
   image: {
     type: String,
     trim: true,
@@ -42,10 +38,6 @@ const productSchema = new mongoose.Schema({
       },
       message: (props) => `${props.value} is not a valid image URL`
     }
-  },
-  role: {
-    type: String,
-    required: true
   },
   price: {
     type: Number,

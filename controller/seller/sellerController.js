@@ -56,7 +56,8 @@ if(password.length < 8){
         isPhoneVerified: false
     },
       password: await bcrypt.hash(password, 10),
-      role: 'seller'
+      role: 'seller',
+      status: "Pending"
     });
     
     const payload = {user: seller._id, role:seller.role}
