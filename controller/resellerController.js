@@ -103,9 +103,9 @@ exports.registerReseller = catchAsync(async (req, res) => {
 
 // login reseller
 exports.loginReseller = catchAsync(async (req, res) => {
-  const { emailAcc, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const reseller = await Reseller.findOne({ "email.emailAcc": emailAcc })
+    const reseller = await Reseller.findOne({ "email.emailAcc": email })
       .select("password")
       .select("role");
 
@@ -115,7 +115,7 @@ exports.loginReseller = catchAsync(async (req, res) => {
     const match = await bcrypt.compare(password, reseller.password);
 
     if (!match) {
-      return response(res, 404, { error: "email and password does not match" });
+      return response(res, 401, { error: "email and password does not match" });
     }
     if (match) {
       const payload = { user: reseller._id, role: reseller.role };

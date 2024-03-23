@@ -20,6 +20,7 @@ const adminRoutes = require("./routes/admin/adminRoutes")
 const sellerRoutes = require("./routes/seller/sellerRoutes")
 const userRoutes = require("./routes/user/userRoutes")
 const orderRoutes = require("./routes/order/orderRoutes")
+const tokenRoutes = require("./routes/verifyTokenRoute")
 
 
 // use routes 
@@ -30,6 +31,7 @@ app.use("/api/admin", adminRoutes)
 app.use("/api/seller", sellerRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/order", orderRoutes)
+app.use("/api/validate-token", tokenRoutes)
 
 
 
